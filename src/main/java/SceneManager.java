@@ -13,55 +13,59 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.io.IOException;
+import java.net.ConnectException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.NoSuchElementException;
 
 public class SceneManager {
     private static boolean authenticate(String username, String password) {
         try {
-            HTTPSUtil loginConnection = new HTTPSUtil(DataManager.serverIp+"/login", "POST");
-
             JSONObject obj = new JSONObject();
             obj.put("username:"+username);
             obj.put("password:"+password);
             String login = obj.toString();
 
-            String out = loginConnection.write(login);
-            System.out.println(out);
+            String out = HTTPUtil.write(DataManager.serverIp+"/login", "POST", login);
             String token = out.split(",")[0].split(":")[1].replace("\"", "").replace("}", "");
             Boolean isAdmin = Boolean.parseBoolean(out.split(",")[1].split(":")[1].replace("\"", "").replace("}", ""));
+
             DataManager.isAdmin = isAdmin;
             DataManager.session = token;
             DataManager.user = username;
 
             return !out.contains("error");
-        }catch(Exception e){
+        }
+        catch(ConnectException e) {
+            e.printStackTrace();
+        }
+        catch(Exception e){
+            return false;
         }
         return false;
     }
 
     private static void register(String username, String password) {
         try {
-            HTTPSUtil registerConnection = new HTTPSUtil(DataManager.serverIp+"/register", "POST");
             JSONObject obj = new JSONObject();
             obj.put("username:"+username);
             obj.put("password:"+password);
             String login = obj.toString();
 
-            String response = registerConnection.write(login);
-            if(!response.contains("error"))
+            String response = HTTPUtil.write(DataManager.serverIp+"/register", "POST", login);
+            if(!response.contains("error")) {
                 System.out.println("User registered successfully");
-            else
+            }
+            else {
                 System.out.println(response);
-        }catch(Exception e){
+            }
+        } catch(Exception e){
+            e.printStackTrace();
         }
     }
 
     public static String getAllUsers(){
         try{
-            HTTPSUtil registerConnection = new HTTPSUtil(DataManager.serverIp+"/register", "GET");
+//            HTTPUtil registerConnection = new HTTPUtil(DataManager.serverIp+"/register", "GET");
         }catch(Exception e){
         }
         return null;
