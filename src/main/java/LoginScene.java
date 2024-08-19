@@ -45,9 +45,9 @@ public class LoginScene {
             if (isAuthenticated) {
                 System.out.println("Login successful!");
                 if(!DataManager.isAdmin)
-                    ((Stage) loginButton.getScene().getWindow()).setScene(SceneManager.getUserScene());
+                    ((Stage) loginButton.getScene().getWindow()).setScene(UserScene.getScene());
                 else
-                    ((Stage) loginButton.getScene().getWindow()).setScene(SceneManager.getAdminScene());
+                    ((Stage) loginButton.getScene().getWindow()).setScene(AdminScene.getScene());
             } else {
                 System.out.println("Invalid username or password!");
             }
@@ -59,6 +59,5 @@ public class LoginScene {
             ClientUtil.register(username, password);
         });
         return new Scene(grid, 300, 200);
-//        return scene;
     }
 }
