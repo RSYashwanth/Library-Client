@@ -1,6 +1,6 @@
 # Library Manager Client
 
-This is a client application for the Library Manager
+This is a client-side application for the Library Manager
 
 ## Table of Contents
 
@@ -11,6 +11,8 @@ This is a client application for the Library Manager
 - [Examples](#examples)
 
 ## Introduction
+
+A client application for the Library Manager program that is built on JavaFX.
 
 ## Features
 
