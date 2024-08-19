@@ -18,50 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SceneManager {
-    private static boolean authenticate(String username, String password) {
-        try {
-            JSONObject obj = new JSONObject();
-            obj.put("username:"+username);
-            obj.put("password:"+password);
-            String login = obj.toString();
-
-            String out = HTTPUtil.write(DataManager.serverIp+"/login", "POST", login);
-            String token = out.split(",")[0].split(":")[1].replace("\"", "").replace("}", "");
-            Boolean isAdmin = Boolean.parseBoolean(out.split(",")[1].split(":")[1].replace("\"", "").replace("}", ""));
-
-            DataManager.isAdmin = isAdmin;
-            DataManager.session = token;
-            DataManager.user = username;
-
-            return !out.contains("error");
-        }
-        catch(ConnectException e) {
-            e.printStackTrace();
-        }
-        catch(Exception e){
-            return false;
-        }
-        return false;
-    }
-
-    private static void register(String username, String password) {
-        try {
-            JSONObject obj = new JSONObject();
-            obj.put("username:"+username);
-            obj.put("password:"+password);
-            String login = obj.toString();
-
-            String response = HTTPUtil.write(DataManager.serverIp+"/register", "POST", login);
-            if(!response.contains("error")) {
-                System.out.println("User registered successfully");
-            }
-            else {
-                System.out.println(response);
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-    }
 
     public static String getAllUsers(){
         try{
@@ -71,55 +27,55 @@ public class SceneManager {
         return null;
     }
 
-    public static Scene getLoginScene(){
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
-
-        Label usernameLabel = new Label("Username:");
-        grid.add(usernameLabel, 0, 0);
-
-        TextField usernameField = new TextField();
-        grid.add(usernameField, 1, 0);
-
-        Label passwordLabel = new Label("Password:");
-        grid.add(passwordLabel, 0, 1);
-
-        PasswordField passwordField = new PasswordField();
-        grid.add(passwordField, 1, 1);
-
-        Button loginButton = new Button("Login");
-        grid.add(loginButton, 0, 2);
-
-        Button registerButton = new Button("Register");
-        grid.add(registerButton, 1, 2);
-
-        loginButton.setOnAction(e -> {
-            String username = usernameField.getText();
-            String password = passwordField.getText();
-
-            boolean isAuthenticated = authenticate(username, password);
-            if (isAuthenticated) {
-                System.out.println("Login successful!");
-                if(!DataManager.isAdmin)
-                    ((Stage) loginButton.getScene().getWindow()).setScene(SceneManager.getUserScene());
-                else
-                    ((Stage) loginButton.getScene().getWindow()).setScene(SceneManager.getAdminScene());
-            } else {
-                System.out.println("Invalid username or password!");
-            }
-        });
-
-        registerButton.setOnAction(e -> {
-            String username = usernameField.getText();
-            String password = passwordField.getText();
-            register(username, password);
-        });
-
-        return new Scene(grid, 300, 200);
-    }
+//    public static Scene getLoginScene(){
+//        GridPane grid = new GridPane();
+//        grid.setAlignment(Pos.CENTER);
+//        grid.setHgap(10);
+//        grid.setVgap(10);
+//        grid.setPadding(new Insets(25, 25, 25, 25));
+//
+//        Label usernameLabel = new Label("Username:");
+//        grid.add(usernameLabel, 0, 0);
+//
+//        TextField usernameField = new TextField();
+//        grid.add(usernameField, 1, 0);
+//
+//        Label passwordLabel = new Label("Password:");
+//        grid.add(passwordLabel, 0, 1);
+//
+//        PasswordField passwordField = new PasswordField();
+//        grid.add(passwordField, 1, 1);
+//
+//        Button loginButton = new Button("Login");
+//        grid.add(loginButton, 0, 2);
+//
+//        Button registerButton = new Button("Register");
+//        grid.add(registerButton, 1, 2);
+//
+//        loginButton.setOnAction(e -> {
+//            String username = usernameField.getText();
+//            String password = passwordField.getText();
+//
+//            boolean isAuthenticated = authenticate(username, password);
+//            if (isAuthenticated) {
+//                System.out.println("Login successful!");
+//                if(!DataManager.isAdmin)
+//                    ((Stage) loginButton.getScene().getWindow()).setScene(SceneManager.getUserScene());
+//                else
+//                    ((Stage) loginButton.getScene().getWindow()).setScene(SceneManager.getAdminScene());
+//            } else {
+//                System.out.println("Invalid username or password!");
+//            }
+//        });
+//
+//        registerButton.setOnAction(e -> {
+//            String username = usernameField.getText();
+//            String password = passwordField.getText();
+//            register(username, password);
+//        });
+//
+//        return new Scene(grid, 300, 200);
+//    }
 
     private static class MyObject {
         private String name;

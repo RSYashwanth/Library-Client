@@ -7,7 +7,6 @@ import java.net.URL;
 
 public class HTTPUtil {
     public static String write(String endpoint, String method, String data) throws IOException {
-        System.out.println(endpoint);
         URL url = new URL(endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(method);
