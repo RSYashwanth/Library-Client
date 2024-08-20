@@ -45,9 +45,6 @@ public class UserScene {
             return date2;
         }
     }
-    public UserScene(){
-
-    }
 
     public static Scene getScene() {
         Label label1 = new Label("User : " + DataManager.user);
@@ -121,6 +118,5 @@ public class UserScene {
         vbox.getChildren().addAll(gridPane, hbox);
 
         return new Scene(vbox, 400, 300);
-//        return scene;
     }
 }
