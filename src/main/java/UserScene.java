@@ -65,34 +65,7 @@ public class UserScene {
                 new Book("Normal Book", new Date(), new Date()));
 
         ListView<Book> listView = new ListView<>(items);
-        listView.setCellFactory(new Callback<ListView<Book>, ListCell<Book>>() {
-            @Override
-            public ListCell<Book> call(ListView<Book> param) {
-                return new ListCell<Book>() {
-                    @Override
-                    protected void updateItem(Book item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty || item == null) {
-                            setGraphic(null);
-                        } else {
-                            HBox hbox = new HBox(10);
-                            hbox.setAlignment(Pos.CENTER_LEFT);
-
-                            Text nameText = new Text(item.getName());
-                            nameText.setTextAlignment(TextAlignment.LEFT);
-                            nameText.setWrappingWidth(150);
-                            Text date1Text = new Text(new SimpleDateFormat("yyyy-MM-dd").format(item.getDate1()));
-                            Text date2Text = new Text(new SimpleDateFormat("yyyy-MM-dd").format(item.getDate2()));
-
-                            HBox.setMargin(nameText, new javafx.geometry.Insets(0, 10, 0, 0));
-
-                            hbox.getChildren().addAll(nameText, date1Text, date2Text);
-                            setGraphic(hbox);
-                        }
-                    }
-                };
-            }
-        });
+        listView.setCellFactory(UserScene::generateCellFactory);
         listView.setPrefWidth(325);
         listView.setPrefHeight(300);
         listView.setFocusTraversable(false);
@@ -101,6 +74,7 @@ public class UserScene {
         button1.setPrefSize(80, 100);
         button1.setFocusTraversable(false);
         button1.setShape(new Rectangle(80, 100));
+
         Button button2 = new Button("Expand");
         button2.setPrefSize(80, 100);
         button2.setFocusTraversable(false);
@@ -109,6 +83,7 @@ public class UserScene {
         VBox buttons = new VBox();
         buttons.setAlignment(Pos.CENTER);
         buttons.getChildren().addAll(button1, button2);
+
         HBox hbox = new HBox();
         hbox.setAlignment(Pos.CENTER_LEFT);
         hbox.getChildren().addAll(listView, buttons);
@@ -118,5 +93,31 @@ public class UserScene {
         vbox.getChildren().addAll(gridPane, hbox);
 
         return new Scene(vbox, 400, 300);
+    }
+
+    public static ListCell<Book> generateCellFactory(ListView<Book> param) {
+        return new ListCell<>() {
+            @Override
+            protected void updateItem(Book item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    HBox hbox = new HBox(10);
+                    hbox.setAlignment(Pos.CENTER_LEFT);
+
+                    Text nameText = new Text(item.getName());
+                    nameText.setTextAlignment(TextAlignment.LEFT);
+                    nameText.setWrappingWidth(150);
+                    Text date1Text = new Text(new SimpleDateFormat("yyyy-MM-dd").format(item.getDate1()));
+                    Text date2Text = new Text(new SimpleDateFormat("yyyy-MM-dd").format(item.getDate2()));
+
+                    HBox.setMargin(nameText, new Insets(0, 10, 0, 0));
+
+                    hbox.getChildren().addAll(nameText, date1Text, date2Text);
+                    setGraphic(hbox);
+                }
+            }
+        };
     }
 }
