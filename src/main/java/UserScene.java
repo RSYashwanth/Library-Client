@@ -27,30 +27,6 @@ public class UserScene {
 
     private static Label numBooksLabel;
 
-    private static class Book {
-        private String name;
-        private LocalDate date1;
-        private LocalDate date2;
-
-        public Book(String name, LocalDate date1, LocalDate date2) {
-            this.name = name;
-            this.date1 = date1;
-            this.date2 = date2;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public LocalDate getDate1() {
-            return date1;
-        }
-
-        public LocalDate getDate2() {
-            return date2;
-        }
-    }
-
     public static Scene getScene() {
         createGrid();
         initializeBookList();
@@ -60,7 +36,7 @@ public class UserScene {
         return new Scene(vbox, 400, 300);
     }
 
-    public static void createGrid() {
+    private static void createGrid() {
         grid = new GridPane();
         grid.setAlignment(Pos.CENTER_LEFT);
         grid.setHgap(10);
@@ -108,14 +84,15 @@ public class UserScene {
         vbox.getChildren().addAll(grid, hbox);
     }
 
-    public static ListCell<Book> generateCellFactory(ListView<Book> param) {
+    private static ListCell<Book> generateCellFactory(ListView<Book> param) {
         return new ListCell<>() {
             @Override
             protected void updateItem(Book item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setGraphic(null);
-                } else {
+                }
+                else {
                     HBox hbox = new HBox(10);
                     hbox.setAlignment(Pos.CENTER_LEFT);
 
@@ -150,13 +127,14 @@ public class UserScene {
             for (String book : books) {
                 book = book.trim().substring(1, book.length()-1);
                 String[] parts = book.split(",");
+                int id = Integer.parseInt(parts[0].split(":")[1].trim());
                 String title = parts[1].split(":")[1].trim();
                 String date = parts[3].split(":")[1].trim();
                 if (!date.equals("null")) {
                     System.out.println(date.split("T")[0]);
                     LocalDate issued = LocalDate.parse(date.split("T")[0]);
                     LocalDate due = issued.plusDays(15);
-                    items.add(new Book(title, issued, due));
+                    items.add(new Book(id, title, issued, due));
                 }
             }
         }
