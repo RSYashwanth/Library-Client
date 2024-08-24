@@ -4,10 +4,10 @@ public class JSONObject {
 
     ArrayList<String> objects = new ArrayList<String>();
 
-    public void put(String object) throws Exception {
+    public void put(String object) {
         String[] keyValPair = object.split(":");
         if(keyValPair.length!=2)
-            throw new Exception("Element must only have a single \":\"");
+            throw new IllegalArgumentException("Element must only have a single \":\"");
         objects.add("\""+keyValPair[0]+"\""+":"+"\""+keyValPair[1]+"\"");
     }
 

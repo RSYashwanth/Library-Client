@@ -11,7 +11,7 @@ public class HTTPUtil {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(method);
         connection.setRequestProperty("Content-Type", "application/json");
-        connection.setDoOutput(true);
+        connection.setDoOutput(method.equalsIgnoreCase("POST"));
 
         if (DataManager.session != null) {
             connection.setRequestProperty("Authorization", "Bearer " + DataManager.session);
@@ -20,10 +20,12 @@ public class HTTPUtil {
             connection.setRequestProperty("User", DataManager.user);
         }
 
-        OutputStream outputStream = connection.getOutputStream();
-        outputStream.write(data.getBytes());
-        outputStream.flush();
-        outputStream.close();
+        if (method.equalsIgnoreCase("POST")) {
+            OutputStream outputStream = connection.getOutputStream();
+            outputStream.write(data.getBytes());
+            outputStream.flush();
+            outputStream.close();
+        }
 
         int responseCode = connection.getResponseCode();
         BufferedReader reader = new BufferedReader(

@@ -13,21 +13,26 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Callback;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class UserScene {
+    private static GridPane grid;
 
-    public static Scene scene;
+    private static VBox vbox;
+
+    private static ObservableList<Book> items;
+
+    private static Label numBooksLabel;
 
     private static class Book {
         private String name;
-        private Date date1;
-        private Date date2;
+        private LocalDate date1;
+        private LocalDate date2;
 
-        public Book(String name, Date date1, Date date2) {
+        public Book(String name, LocalDate date1, LocalDate date2) {
             this.name = name;
             this.date1 = date1;
             this.date2 = date2;
@@ -37,32 +42,38 @@ public class UserScene {
             return name;
         }
 
-        public Date getDate1() {
+        public LocalDate getDate1() {
             return date1;
         }
 
-        public Date getDate2() {
+        public LocalDate getDate2() {
             return date2;
         }
     }
 
     public static Scene getScene() {
+        createGrid();
+        initializeBookList();
+        populateUI();
+        refreshNumBooks();
+
+        return new Scene(vbox, 400, 300);
+    }
+
+    public static void createGrid() {
+        grid = new GridPane();
+        grid.setAlignment(Pos.CENTER_LEFT);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+    }
+
+    private static void populateUI() {
         Label label1 = new Label("User : " + DataManager.user);
-        Label label3 = new Label("Number of Books : ");
+        numBooksLabel = new Label("Number of Books : " + DataManager.numBooks);
 
-        GridPane gridPane = new GridPane();
-        gridPane.setAlignment(Pos.CENTER_LEFT);
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(25, 25, 25, 25));
-
-        gridPane.add(label1, 0, 0);
-        gridPane.add(label3, 0, 2);
-
-        ObservableList<Book> items = FXCollections.observableArrayList(
-                new Book("Book", new Date(), new Date()),
-                new Book("This is a super long book title", new Date(), new Date()),
-                new Book("Normal Book", new Date(), new Date()));
+        grid.add(label1, 0, 0);
+        grid.add(numBooksLabel, 0, 2);
 
         ListView<Book> listView = new ListView<>(items);
         listView.setCellFactory(UserScene::generateCellFactory);
@@ -74,6 +85,10 @@ public class UserScene {
         button1.setPrefSize(80, 100);
         button1.setFocusTraversable(false);
         button1.setShape(new Rectangle(80, 100));
+        button1.setOnAction((e) -> {
+            refreshBookList();
+            refreshNumBooks();
+        });
 
         Button button2 = new Button("Expand");
         button2.setPrefSize(80, 100);
@@ -88,11 +103,9 @@ public class UserScene {
         hbox.setAlignment(Pos.CENTER_LEFT);
         hbox.getChildren().addAll(listView, buttons);
 
-        VBox vbox = new VBox(20);
+        vbox = new VBox(20);
         vbox.setAlignment(Pos.CENTER);
-        vbox.getChildren().addAll(gridPane, hbox);
-
-        return new Scene(vbox, 400, 300);
+        vbox.getChildren().addAll(grid, hbox);
     }
 
     public static ListCell<Book> generateCellFactory(ListView<Book> param) {
@@ -109,15 +122,51 @@ public class UserScene {
                     Text nameText = new Text(item.getName());
                     nameText.setTextAlignment(TextAlignment.LEFT);
                     nameText.setWrappingWidth(150);
-                    Text date1Text = new Text(new SimpleDateFormat("yyyy-MM-dd").format(item.getDate1()));
-                    Text date2Text = new Text(new SimpleDateFormat("yyyy-MM-dd").format(item.getDate2()));
+
+                    Text date1Text = new Text(item.getDate1().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                    Text date2Text = new Text(item.getDate2().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
                     HBox.setMargin(nameText, new Insets(0, 10, 0, 0));
-
                     hbox.getChildren().addAll(nameText, date1Text, date2Text);
                     setGraphic(hbox);
                 }
             }
         };
+    }
+
+    private static void initializeBookList() {
+        items = FXCollections.observableArrayList();
+        refreshBookList();
+    }
+
+    private static void refreshBookList() {
+        items.clear();
+        try {
+            String books[] = HTTPUtil.write(
+                    DataManager.serverIp + "/books?username=" + DataManager.user,
+                    "GET",
+                    "").replace("\"", "").split("\\|\\|");
+
+            for (String book : books) {
+                book = book.trim().substring(1, book.length()-1);
+                String[] parts = book.split(",");
+                String title = parts[1].split(":")[1].trim();
+                String date = parts[3].split(":")[1].trim();
+                if (!date.equals("null")) {
+                    System.out.println(date.split("T")[0]);
+                    LocalDate issued = LocalDate.parse(date.split("T")[0]);
+                    LocalDate due = issued.plusDays(15);
+                    items.add(new Book(title, issued, due));
+                }
+            }
+        }
+        catch (IOException | IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        DataManager.numBooks = items.size();
+    }
+
+    private static void refreshNumBooks() {
+        numBooksLabel.setText("Number of Books: " + DataManager.numBooks);
     }
 }
