@@ -7,6 +7,7 @@ public class Book {
     private LocalDate date2;
 
     public Book(int id, String name, LocalDate date1, LocalDate date2) {
+        this.id = id;
         this.name = name;
         this.date1 = date1;
         this.date2 = date2;

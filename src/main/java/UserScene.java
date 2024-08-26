@@ -120,18 +120,20 @@ public class UserScene {
         items.clear();
         try {
             String books[] = HTTPUtil.write(
-                    DataManager.serverIp + "/books?username=" + DataManager.user,
+                    DataManager.serverIp + "/books/" + DataManager.user,
                     "GET",
                     "").replace("\"", "").split("\\|\\|");
 
             for (String book : books) {
+                if (book.length() == 0) {
+                    continue;
+                }
                 book = book.trim().substring(1, book.length()-1);
                 String[] parts = book.split(",");
                 int id = Integer.parseInt(parts[0].split(":")[1].trim());
                 String title = parts[1].split(":")[1].trim();
                 String date = parts[3].split(":")[1].trim();
                 if (!date.equals("null")) {
-                    System.out.println(date.split("T")[0]);
                     LocalDate issued = LocalDate.parse(date.split("T")[0]);
                     LocalDate due = issued.plusDays(15);
                     items.add(new Book(id, title, issued, due));
