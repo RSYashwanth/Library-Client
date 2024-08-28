@@ -64,10 +64,14 @@ public class LoginScene {
         boolean isAuthenticated = ClientUtil.authenticate(username, password);
         if (isAuthenticated) {
             System.out.println("Login successful!");
-            if(!DataManager.isAdmin)
+            if(!DataManager.isAdmin) {
+                ((Stage) scene.getWindow()).setTitle("User Client");
                 ((Stage) scene.getWindow()).setScene(UserScene.getScene());
-            else
+            }
+            else {
+                ((Stage) scene.getWindow()).setTitle("Admin Client");
                 ((Stage) scene.getWindow()).setScene(AdminScene.getScene());
+            }
         } else {
             System.out.println("Invalid username or password!");
         }

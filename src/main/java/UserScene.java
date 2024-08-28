@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -33,7 +34,8 @@ public class UserScene {
         populateUI();
         refreshNumBooks();
 
-        return new Scene(vbox, 400, 300);
+        Scene scene = new Scene(vbox, 400, 300);
+        return scene;
     }
 
     private static void createGrid() {
