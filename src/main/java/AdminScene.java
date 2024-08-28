@@ -1,10 +1,8 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -190,7 +188,38 @@ public class AdminScene {
         popup.initModality(Modality.APPLICATION_MODAL);
         popup.initOwner(owner);
 
+        VBox vbox = new VBox();
+        vbox.setPadding(new Insets(10));
+
+        Label label = new Label("Title:");
+        vbox.getChildren().add(label);
+
+        TextField field = new TextField();
+        vbox.getChildren().add(field);
+
+        Button button = new Button("Add Book");
+        button.setPadding(new Insets(10));
+        button.setOnAction(e -> {
+            addBook(field.getText());
+            popup.close();
+            refreshLabels();
+            refreshBookList();
+        });
+        vbox.getChildren().add(button);
+
+        popup.setScene(new Scene(vbox, 200, 100));
         popup.setTitle("Add new book");
         popup.showAndWait();
+    }
+
+    private static void addBook(String title) {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("title:" + title);
+            HTTPUtil.write(DataManager.serverIp + "/addBook", "POST", data.toString());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
