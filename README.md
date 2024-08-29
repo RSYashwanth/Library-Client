@@ -7,7 +7,6 @@ This is a client-side application for the Library Manager
 - [Introduction](#introduction)
 - [Features](#features)
 - [Setup](#setup)
-- [Usage](#usage)
 - [Examples](#examples)
 
 ## Introduction
@@ -39,15 +38,15 @@ A client application for the Library Manager program that is built on JavaFX.
    ```sh
    git clone https://github.com/RSYashwanth/Library-Client.git
    ```
-2. Build a docker image:
+2. Follow instruction in backend repository to have it running
+3. Build and run application using maven
    ```sh
-   docker build -t <ImageName> .
+   mvn clean javafx:run
    ```
-3. Run docker
-   ```sh
-   docker run <ImageName>
-   ```
-## Usage
 
 ## Examples
-   
+
+1. ![Authentication window](images/login.png)
+2. ![Admin windown](images/admin.png)
+3. ![User window](images/user.png)
+
